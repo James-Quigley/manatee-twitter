@@ -5,6 +5,7 @@ go 1.13
 require (
 	github.com/ChimeraCoder/anaconda v2.0.0+incompatible
 	github.com/ChimeraCoder/tokenbucket v0.0.0-20131201223612-c5a927568de7 // indirect
+	github.com/aws/aws-lambda-go v1.15.0 // indirect
 	github.com/aws/aws-sdk-go v1.29.15
 	github.com/azr/backoff v0.0.0-20160115115103-53511d3c7330 // indirect
 	github.com/dghubble/go-twitter v0.0.0-20190719072343-39e5462e111f

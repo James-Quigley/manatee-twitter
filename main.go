@@ -10,6 +10,8 @@ import (
 	"strings"
 	"sync"
 
+	"github.com/aws/aws-lambda-go/lambda"
+
 	"github.com/joho/godotenv"
 
 	"github.com/ChimeraCoder/anaconda"
@@ -94,7 +96,7 @@ func moveAllToUnused(svc *s3.S3) {
 	wg.Wait()
 }
 
-func main() {
+func HandleRequest() error {
 	err := godotenv.Load()
 
 	twitterAccessToken := os.Getenv("TWITTER_ACCESS_TOKEN")
@@ -164,4 +166,9 @@ func main() {
 	} else {
 		moveImageToUsed(svc, image)
 	}
+	return nil
+}
+
+func main() {
+	lambda.Start(HandleRequest)
 }
