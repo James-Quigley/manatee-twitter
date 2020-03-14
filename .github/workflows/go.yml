@@ -23,28 +23,12 @@ jobs:
       - name: Zip
         run: |
           mkdir -p builds
-          zip -o builds/manatee-twitter.zip manatee-twitter
-      - name: Calculate hash
-        run: |
-          CODE=$(openssl dgst -sha256 -binary builds/manatee-twitter.zip | openssl enc -base64)
-          echo $CODE > builds/manatee-twitter.zip.base64sha256
-      - name: S3 Sync
-        uses: jakejarvis/s3-sync-action@v0.5.1
-        env:
-          AWS_S3_BUCKET: ${{ secrets.AWS_S3_BUCKET }}
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          AWS_REGION: "us-east-1"
-          SOURCE_DIR: "./builds"
-          DEST_DIR: "manatee-twitter"
-      - uses: chrislennon/action-aws-cli@v1.1
-      - name: Update content-type of sha file
-        run: |
-          aws s3 cp --content-type "text/plain" \
-          --metadata-directive REPLACE \
-          s3://james-lambda-builds/builds/manatee-twitter.zip.base64sha256 \
-          s3://james-lambda-builds/builds/manatee-twitter.zip.base64sha256
-        env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          AWS_REGION: "us-east-1"
+          zip -o manatee-twitter.zip manatee-twitter
+      - name: AWS Lambda Deploy
+        uses: appleboy/lambda-action@v0.0.2
+        with:
+          aws_region: "us-east-1"
+          aws_access_key_id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          function_name: "manatee-twitter"
+          zip_file: manatee-twitter.zip
