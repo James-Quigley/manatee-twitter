@@ -154,7 +154,7 @@ func main() {
 
 	v := url.Values{}
 	v.Set("media_ids", media.MediaIDString)
-	_, err = api.PostTweet("Hello, world!", v)
+	_, err = api.PostTweet("", v)
 	if err != nil {
 		log.Fatalf("Failed to post tweet: %v", err)
 	}
