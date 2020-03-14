@@ -42,5 +42,9 @@ jobs:
         run: |
           aws s3 cp --content-type "text/plain" \
           --metadata-directive REPLACE \
-          s3://${{ secrets.AWS_S3_BUCKET }}/builds/manatee-twitter.zip.base64sha256 \
-          s3://${{ secrets.AWS_S3_BUCKET }}/builds/manatee-twitter.zip.base64sha256
+          s3://james-lambda-builds/builds/manatee-twitter.zip.base64sha256 \
+          s3://james-lambda-builds/builds/manatee-twitter.zip.base64sha256
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_REGION: "us-east-1"
