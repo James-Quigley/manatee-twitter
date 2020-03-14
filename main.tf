@@ -17,7 +17,7 @@ resource "aws_lambda_function" "manatee_twitter" {
   s3_bucket     = "james-lambda-builds"
   s3_key        = "manatee-twitter/manatee-twitter.zip"
   function_name = "manatee-twitter"
-  role          = "${aws_iam_role.manatee-twitter.arn}"
+  role          = "${aws_iam_role.manatee_twitter.arn}"
   handler       = "manatee-twitter"
 
   runtime = "go1.x"
