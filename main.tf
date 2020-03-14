@@ -13,11 +13,6 @@ provider "aws" {
   region = "us-east-1"
 }
 
-data "aws_s3_bucket_object" "zip_hash" {
-  bucket = "james-lambda-builds"
-  key    = "manatee-twitter/manatee-twitter.zip.base64sha256"
-}
-
 resource "aws_lambda_function" "manatee_twitter" {
   s3_bucket     = "james-lambda-builds"
   s3_key        = "manatee-twitter/manatee-twitter.zip"
@@ -26,8 +21,6 @@ resource "aws_lambda_function" "manatee_twitter" {
   handler       = "manatee-twitter"
 
   runtime = "go1.x"
-
-  source_code_hash = data.aws_s3_bucket_object.zip_hash.body
 
   lifecycle {
     ignore_changes = [
