@@ -1,3 +1,18 @@
+terraform {
+  backend "remote" {
+    hostname     = "app.terraform.io"
+    organization = "Quames"
+
+    workspaces {
+      name = "manatee-twitter"
+    }
+  }
+}
+
+provider "aws" {
+  region = "us-east-1"
+}
+
 resource "aws_lambda_function" "manatee_twitter" {
   s3_bucket     = "james-lambda-builds"
   s3_key        = "manatee-twitter/manatee-twitter.zip"
