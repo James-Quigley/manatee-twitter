@@ -27,7 +27,7 @@ resource "aws_lambda_function" "manatee_twitter" {
 
   runtime = "go1.x"
 
-  source_code_hash = "${data.aws_s3_bucket_object.zip_hash.body))}"
+  source_code_hash = data.aws_s3_bucket_object.zip_hash.body
 
   lifecycle {
     ignore_changes = [
