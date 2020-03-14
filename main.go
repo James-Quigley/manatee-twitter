@@ -126,7 +126,7 @@ func main() {
 
 	downloader := s3manager.NewDownloader(sess)
 
-	fileKey := strings.Replace(*image.Key, "unused/", "", 1)
+	fileKey := "/tmp/" + strings.Replace(*image.Key, "unused/", "", 1)
 	file, err := os.Create(fileKey)
 	if err != nil {
 		log.Fatalf("Failed to create tmp file location: %v", err)
