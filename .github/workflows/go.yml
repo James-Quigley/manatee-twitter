@@ -20,9 +20,11 @@ jobs:
       uses: actions/checkout@v2
 
     - name: Build
-      run: go build -v .
+      run: go build -o manatee-twitter -v .
     - name: Zip
-      run: zip -o manatee-twitter.zip manatee-twitter
+      run: |
+        mkdir -p builds
+        zip -o builds/manatee-twitter.zip manatee-twitter
     - name: S3 Sync
       uses: jakejarvis/s3-sync-action@v0.5.1
       env:
@@ -30,4 +32,5 @@ jobs:
         AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
         AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         AWS_REGION: 'us-east-1'
-        SOURCE_DIR: './manatee-twitter.zip'
+        SOURCE_DIR: './builds'
+        DEST_DIR: 'manatee-twitter'
