@@ -19,6 +19,7 @@ resource "aws_lambda_function" "manatee_twitter" {
   function_name = "manatee-twitter"
   role          = aws_iam_role.manatee_twitter.arn
   handler       = "manatee-twitter"
+  timeout       = 15
 
   runtime = "go1.x"
 
