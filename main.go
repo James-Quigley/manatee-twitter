@@ -123,8 +123,16 @@ func HandleRequest() error {
 	if err != nil {
 		log.Fatalf("Error getting images: %v", err)
 	}
-	idx := rand.Intn(len(objects.Contents))
-	image := objects.Contents[idx]
+	image := objects.Contents[0]
+	for {
+		idx := rand.Intn(len(objects.Contents))
+		image = objects.Contents[idx]
+		log.Printf("Considering image: %s", *image.Key)
+		if strings.HasSuffix(*image.Key, ".jpg") {
+			break
+		}
+	}
+	log.Printf("Using image: %s", *image.Key)
 
 	downloader := s3manager.NewDownloader(sess)
 
