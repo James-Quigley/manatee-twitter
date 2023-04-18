@@ -80,7 +80,8 @@ data "aws_iam_policy_document" "manatee_twitter_permissions" {
       "ssm:GetParameter"
     ]
     resources = [
-      "arn:aws:ssm:*:579709515411:parameter/manatee-twitter/*"
+      "arn:aws:ssm:*:579709515411:parameter/manatee-twitter/*",
+      "arn:aws:ssm:*:579709515411:parameter/manatee-twitter"
     ]
   }
 }
