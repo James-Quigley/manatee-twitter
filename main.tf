@@ -72,6 +72,15 @@ data "aws_iam_policy_document" "manatee_twitter_permissions" {
       "arn:aws:s3:::quaki-manatee-pics/*"
     ]
   }
+
+  statement {
+    actions = [
+      "ssm:GetParameter*"
+    ]
+    resources = [
+      "arn:aws:ssm:*:579709515411:parameter/manatee-twitter/*"
+    ]
+  }
 }
 
 resource "aws_iam_role" "manatee_twitter" {
