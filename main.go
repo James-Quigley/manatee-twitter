@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"encoding/base64"
 	"io/ioutil"
 	"log"
@@ -21,6 +22,7 @@ import (
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/s3"
 	"github.com/aws/aws-sdk-go/service/s3/s3manager"
+	mastodon "github.com/mattn/go-mastodon"
 )
 
 var BUCKET string = "quaki-manatee-pics"
@@ -108,6 +110,18 @@ func HandleRequest() error {
 		log.Fatalln("Missing required Twitter environment variables")
 	}
 
+	mastodonServerUrl := os.Getenv("MASTODON_SERVER_URL")
+	mastodonAccessToken := os.Getenv("MASTODON_ACCESS_TOKEN")
+
+	if mastodonServerUrl == "" || mastodonAccessToken == "" {
+		log.Fatalln("Missing required Mastodon environment variables")
+	}
+
+	mastodonClient := mastodon.NewClient(&mastodon.Config{
+		Server:      mastodonServerUrl,
+		AccessToken: mastodonAccessToken,
+	})
+
 	api := anaconda.NewTwitterApiWithCredentials(
 		twitterAccessToken,
 		twitterAccessTokenSecret,
@@ -167,6 +181,17 @@ func HandleRequest() error {
 	_, err = api.PostTweet("", v)
 	if err != nil {
 		log.Fatalf("Failed to post tweet: %v", err)
+	}
+
+	mastodonAttachment, err := mastodonClient.UploadMedia(context.TODO(), file.Name())
+	if err != nil {
+		log.Fatalf("Failed to upload image to mastodon: %v", err)
+	}
+	_, err = mastodonClient.PostStatus(context.TODO(), &mastodon.Toot{
+		MediaIDs: []mastodon.ID{mastodonAttachment.ID},
+	})
+	if err != nil {
+		log.Fatalf("Failed to post toot: %v", err)
 	}
 
 	if len(objects.Contents) == 2 {
