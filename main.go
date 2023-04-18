@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"encoding/base64"
+	"fmt"
 	"io/ioutil"
 	"log"
 	"math/rand"
@@ -98,6 +99,42 @@ func moveAllToUnused(svc *s3.S3) {
 	wg.Wait()
 }
 
+func PostToTwitter(api *anaconda.TwitterApi, fileName string) error {
+	data, err := ioutil.ReadFile(fileName)
+	if err != nil {
+		return fmt.Errorf("Unable to read file: %v", err)
+	}
+	base64Str := base64.StdEncoding.EncodeToString(data)
+
+	media, err := api.UploadMedia(base64Str)
+	if err != nil {
+		return fmt.Errorf("Failed to upload image: %v", err)
+	}
+
+	v := url.Values{}
+	v.Set("media_ids", media.MediaIDString)
+	_, err = api.PostTweet("", v)
+	if err != nil {
+		return fmt.Errorf("Failed to post tweet: %v", err)
+	}
+
+	return nil
+}
+
+func PostToMastodon(mastodonClient *mastodon.Client, fileName string) error {
+	mastodonAttachment, err := mastodonClient.UploadMedia(context.TODO(), fileName)
+	if err != nil {
+		return fmt.Errorf("Failed to upload image to mastodon: %v", err)
+	}
+	_, err = mastodonClient.PostStatus(context.TODO(), &mastodon.Toot{
+		MediaIDs: []mastodon.ID{mastodonAttachment.ID},
+	})
+	if err != nil {
+		return fmt.Errorf("Failed to post toot: %v", err)
+	}
+	return nil
+}
+
 func HandleRequest() error {
 	err := godotenv.Load()
 
@@ -165,33 +202,15 @@ func HandleRequest() error {
 		log.Fatalf("Unable to download file: %v", err)
 	}
 
-	data, err := ioutil.ReadFile(file.Name())
-	if err != nil {
-		log.Fatalf("Unable to read file: %v", err)
-	}
-	base64Str := base64.StdEncoding.EncodeToString(data)
+	twitterErr := PostToTwitter(api, file.Name())
+	mastodonErr := PostToMastodon(mastodonClient, file.Name())
 
-	media, err := api.UploadMedia(base64Str)
-	if err != nil {
-		log.Fatalf("Failed to upload image: %v", err)
+	if twitterErr != nil {
+		log.Fatalf("Failed to send Tweet: %v", twitterErr)
 	}
 
-	v := url.Values{}
-	v.Set("media_ids", media.MediaIDString)
-	_, err = api.PostTweet("", v)
-	if err != nil {
-		log.Fatalf("Failed to post tweet: %v", err)
-	}
-
-	mastodonAttachment, err := mastodonClient.UploadMedia(context.TODO(), file.Name())
-	if err != nil {
-		log.Fatalf("Failed to upload image to mastodon: %v", err)
-	}
-	_, err = mastodonClient.PostStatus(context.TODO(), &mastodon.Toot{
-		MediaIDs: []mastodon.ID{mastodonAttachment.ID},
-	})
-	if err != nil {
-		log.Fatalf("Failed to post toot: %v", err)
+	if mastodonErr != nil {
+		log.Fatalf("Failed to send Toot: %v", mastodonErr)
 	}
 
 	if len(objects.Contents) == 2 {
