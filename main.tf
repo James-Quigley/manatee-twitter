@@ -75,7 +75,9 @@ data "aws_iam_policy_document" "manatee_twitter_permissions" {
 
   statement {
     actions = [
-      "ssm:GetParameter*"
+      "ssm:GetParametersByPath",
+      "ssm:GetParameters",
+      "ssm:GetParameter"
     ]
     resources = [
       "arn:aws:ssm:*:579709515411:parameter/manatee-twitter/*"
