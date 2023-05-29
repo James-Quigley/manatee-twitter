@@ -164,14 +164,14 @@ func Handle() error {
 
 	}
 
-	twitterAccessToken := os.Getenv("TWITTER_ACCESS_TOKEN")
-	twitterAccessTokenSecret := os.Getenv("TWITTER_ACCESS_TOKEN_SECRET")
-	twitterConsumerKey := os.Getenv("TWITTER_CONSUMER_KEY")
-	twitterConsumerSecret := os.Getenv("TWITTER_CONSUMER_SECRET")
+	// twitterAccessToken := os.Getenv("TWITTER_ACCESS_TOKEN")
+	// twitterAccessTokenSecret := os.Getenv("TWITTER_ACCESS_TOKEN_SECRET")
+	// twitterConsumerKey := os.Getenv("TWITTER_CONSUMER_KEY")
+	// twitterConsumerSecret := os.Getenv("TWITTER_CONSUMER_SECRET")
 
-	if twitterAccessToken == "" || twitterAccessTokenSecret == "" || twitterConsumerKey == "" || twitterConsumerSecret == "" {
-		log.Fatalln("Missing required Twitter environment variables")
-	}
+	// if twitterAccessToken == "" || twitterAccessTokenSecret == "" || twitterConsumerKey == "" || twitterConsumerSecret == "" {
+	// 	log.Fatalln("Missing required Twitter environment variables")
+	// }
 
 	mastodonServerUrl := os.Getenv("MASTODON_SERVER_URL")
 	mastodonAccessToken := os.Getenv("MASTODON_ACCESS_TOKEN")
@@ -185,11 +185,11 @@ func Handle() error {
 		AccessToken: mastodonAccessToken,
 	})
 
-	api := anaconda.NewTwitterApiWithCredentials(
-		twitterAccessToken,
-		twitterAccessTokenSecret,
-		twitterConsumerKey,
-		twitterConsumerSecret)
+	// api := anaconda.NewTwitterApiWithCredentials(
+	// 	twitterAccessToken,
+	// 	twitterAccessTokenSecret,
+	// 	twitterConsumerKey,
+	// 	twitterConsumerSecret)
 
 	svc := s3.New(sess)
 
@@ -225,12 +225,12 @@ func Handle() error {
 		log.Fatalf("Unable to download file: %v", err)
 	}
 
-	twitterErr := PostToTwitter(api, file.Name())
+	// twitterErr := PostToTwitter(api, file.Name())
 	mastodonErr := PostToMastodon(mastodonClient, file.Name())
 
-	if twitterErr != nil {
-		log.Fatalf("Failed to send Tweet: %v", twitterErr)
-	}
+	// if twitterErr != nil {
+	// 	log.Fatalf("Failed to send Tweet: %v", twitterErr)
+	// }
 
 	if mastodonErr != nil {
 		log.Fatalf("Failed to send Toot: %v", mastodonErr)
