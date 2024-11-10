@@ -30,17 +30,17 @@ resource "aws_lambda_function" "manatee_twitter" {
   }
 }
 
-resource "aws_cloudwatch_event_rule" "manatee_twitter" {
-  name                = "manatee-twitter-invocation"
-  description         = "Runs the manatee-twitter bot daily"
-  schedule_expression = "cron(0 13 * * ? *)"
-}
+# resource "aws_cloudwatch_event_rule" "manatee_twitter" {
+#   name                = "manatee-twitter-invocation"
+#   description         = "Runs the manatee-twitter bot daily"
+#   schedule_expression = "cron(0 13 * * ? *)"
+# }
 
-resource "aws_cloudwatch_event_target" "manatee_twitter" {
-  rule      = aws_cloudwatch_event_rule.manatee_twitter.name
-  target_id = "manatee_twitter"
-  arn       = aws_lambda_function.manatee_twitter.arn
-}
+# resource "aws_cloudwatch_event_target" "manatee_twitter" {
+#   rule      = aws_cloudwatch_event_rule.manatee_twitter.name
+#   target_id = "manatee_twitter"
+#   arn       = aws_lambda_function.manatee_twitter.arn
+# }
 
 resource "aws_lambda_permission" "manatee_twitter" {
   action        = "lambda:InvokeFunction"
