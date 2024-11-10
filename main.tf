@@ -42,12 +42,12 @@ resource "aws_lambda_function" "manatee_twitter" {
 #   arn       = aws_lambda_function.manatee_twitter.arn
 # }
 
-resource "aws_lambda_permission" "manatee_twitter" {
-  action        = "lambda:InvokeFunction"
-  function_name = aws_lambda_function.manatee_twitter.function_name
-  principal     = "events.amazonaws.com"
-  source_arn    = aws_cloudwatch_event_rule.manatee_twitter.arn
-}
+# resource "aws_lambda_permission" "manatee_twitter" {
+#   action        = "lambda:InvokeFunction"
+#   function_name = aws_lambda_function.manatee_twitter.function_name
+#   principal     = "events.amazonaws.com"
+#   source_arn    = aws_cloudwatch_event_rule.manatee_twitter.arn
+# }
 
 data "aws_iam_policy_document" "manatee_twitter_assume_role" {
   statement {
